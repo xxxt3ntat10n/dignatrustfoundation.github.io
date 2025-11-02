@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://dignitrustfoundation.com/sitemap.xml
