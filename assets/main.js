@@ -2717,3 +2717,74 @@
 		ready.run();
 
 })();
+
+
+// ---- Digna Staking Module ----
+let provider;
+let signer;
+const DGN_ADDRESS = "0x5AA59f0fC809fDd2813ed1Bc2EC47d8579C89F2d";
+const VAULT_ADDRESS = "0xC693a927478CE1A312b7322c0442c5edEfB5c45F";
+
+const DGN_ABI = [
+  "function balanceOf(address) view returns (uint256)",
+  "function approve(address spender, uint256 amount) returns (bool)"
+];
+
+const VAULT_ABI = [
+  "function stake(uint256 amount)",
+  "function unstake(uint256 amount)",
+  "function getStaked(address user) view returns(uint256)",
+  "function getRewards(address user) view returns(uint256)",
+  "function claimRewards()"
+];
+
+async function initStaking() {
+  if (typeof window.ethereum === 'undefined') return;
+
+  provider = new ethers.BrowserProvider(window.ethereum);
+  signer = await provider.getSigner();
+
+  const dgn = new ethers.Contract(DGN_ADDRESS, DGN_ABI, signer);
+  const vault = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, signer);
+
+  document.getElementById("stakingUI").style.display = "block";
+
+  const addr = await signer.getAddress();
+
+  async function refresh() {
+    const bal = await dgn.balanceOf(addr);
+    const staked = await vault.getStaked(addr);
+    const rewards = await vault.getRewards(addr);
+
+    document.getElementById("dgnBalance").innerText = ethers.formatUnits(bal,18);
+    document.getElementById("stakedAmount").innerText = ethers.formatUnits(staked,18);
+    document.getElementById("rewards").innerText = ethers.formatUnits(rewards,18);
+  }
+
+  refresh();
+
+  document.getElementById("stakeBtn").onclick = async () => {
+    const amount = document.getElementById("stakeAmount").value;
+    const wei = ethers.parseUnits(amount,18);
+    await dgn.approve(VAULT_ADDRESS, wei);
+    await vault.stake(wei);
+    refresh();
+  };
+
+  document.getElementById("unstakeBtn").onclick = async () => {
+    const amount = document.getElementById("stakeAmount").value;
+    const wei = ethers.parseUnits(amount,18);
+    await vault.unstake(wei);
+    refresh();
+  };
+
+  document.getElementById("claimBtn").onclick = async () => {
+    await vault.claimRewards();
+    refresh();
+  };
+}
+
+document.getElementById("connectWalletBtn").onclick = async () => {
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+  initStaking();
+};
