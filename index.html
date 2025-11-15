@@ -343,5 +343,28 @@
   </div>
 </section>
 
+
+<!-- Digna Staking Module -->
+<div id="staking-section" class="staking-container">
+  <h2 class="staking-title">Stake $DGN</h2>
+  <p class="staking-sub">Earn rewards by staking your DGN tokens.</p>
+
+  <button id="connectWallet" class="staking-btn">Connect Wallet</button>
+
+  <div id="stakingPanel" class="staking-panel hidden">
+      <p><strong>Wallet:</strong> <span id="walletAddress">Not connected</span></p>
+      <p><strong>Your Staked:</strong> <span id="userStaked">0</span> DGN</p>
+      <p><strong>Your Rewards:</strong> <span id="userRewards">0</span> DGN</p>
+
+      <input id="stakeAmount" class="staking-input" type="number" placeholder="Amount to stake">
+
+      <button id="stakeBtn" class="staking-btn green">Stake</button>
+      <button id="unstakeBtn" class="staking-btn red">Unstake</button>
+      <button id="claimBtn" class="staking-btn blue">Claim Rewards</button>
+  </div>
+</div>
+
+<script src="assets/staking.js"></script>
+
 </body>
 </html>
